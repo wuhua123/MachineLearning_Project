@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Machine Learning Project - Python and Flask</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+  <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.5.0/d3.min.js"></script>
+  <script src = 'https://code.jquery.com/jquery-3.3.1.min.js'></script>
+</head>
+
+<body>
+<header class="navbar navbar-default">
+  <h2>  
+    <div class="row">
+      <span class="navbar-text"> Dog Breed Prediction with
+          <a href="https://www.tensorflow.org/guide/keras">Tensorflow Keras</a>
+      </span>
+    </div>
+  </h2>
+</header>
+
+<div class="row col-md-12">
+  <div class="jumbotron">
+        <div class="column col-md-6">
+            <span class="navbar-text" style="align-content: center">    
+              <input id='Img-selector' type='file'>
+            </span>
+        </div>
+        <div class="column col-md-6">
+              <span class="navbar-text" style="align-content: center">
+                <button id='predict-button'> Predict </button>
+              </span>
+        </div>
+  </div>
+</div>
+
+<div class="row col-md-12">
+  <center>
+    <div class="column col-md-6">
+      <img id='selected-Img' src=""/>
+    </div>
+    <div class="column col-md-6">
+      <h2><strong> <span id='object-name' style="margin: 0px"></span> </strong></h2><br>
+      <h2><span id='object-prediction' style="margin: 0px"></span></h2>
+    </div>
+  </center>
+</div>
+
+<script>
+//Triggering change event after the Image is selected from the Browse Button 
+let base64Img;
+$("#Img-selector").change(function() {
+    let reader = new FileReader();
+    reader.onload = function(e){
+        let dataURL = reader.result;
+        $('#selected-Img').attr("src", dataURL);
+        base64Img = dataURL.replace(/^data:image\/(png|jpeg);base64,/, "");
+        console.log(base64Img);
+        }
+        // read the file from the file object
+        reader.readAsDataURL($("#Img-selector")[0].files[0]);
+        // the following clears the texts on the page when you select the next image
+        $("#object-name").text("");
+        $("#object-prediction").text("");
+        });
+        
+        $("#predict-button").click(function(event){
+            let message = {
+                image: base64Img
+                }
+            console.log(message);
+            $.post("http://127.0.0.1:5000/predict", JSON.stringify(message), function(response){
+                $("#object-name").text("Breed:"+" "+response.predictions.label);
+                $("#object-prediction").text("Probability:"+" "+(response.predictions.probability*100).toFixed(4)+"%");
+                console.log(response);
+                });
+        });
+</script>
+</body>
+</html>
