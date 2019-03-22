@@ -8,8 +8,8 @@ from PIL import Image
 
 from tensorflow import keras
 from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.vgg19 import (
-    VGG19, 
+from tensorflow.keras.applications.xception import (
+    Xception, 
     preprocess_input, 
     decode_predictions
 )
@@ -30,10 +30,10 @@ def predict_image():
 
     # Load the VGG19 model
     # https://keras.io/applications/#VGG19
-    model = VGG19(include_top=True, weights='imagenet')
+    model = Xception(include_top=True, weights='imagenet')
 
     # Define default image size for VGG19
-    image_size = (224, 224)
+    image_size = (299, 299)
 
     # initialize the response dictionary that will be returned
     message = request.get_json(force = True)
